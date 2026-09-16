@@ -1,0 +1,45 @@
+name: Refresh slate
+
+on:
+  schedule:
+    - cron: "0 15 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: refresh-slate
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unpack app
+        run: unzip -q propbook.zip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build today's slate
+        working-directory: propbook
+        run: npm test && node scripts/refresh.mjs
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          ODDS_BOOKMAKERS: ${{ vars.ODDS_BOOKMAKERS }}
+          ODDS_SPORTS: ${{ vars.ODDS_SPORTS }}
+          ODDS_WINDOW_HOURS: ${{ vars.ODDS_WINDOW_HOURS }}
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: propbook/public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: github-pages
+    steps:
+      - uses: actions/deploy-pages@v4
