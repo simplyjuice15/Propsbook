@@ -29,7 +29,7 @@ jobs:
         working-directory: propbook
         run: npm test && node scripts/refresh.mjs
         env:
-          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          PROPLINE_API_KEY: ${{ secrets.PROPLINE_API_KEY }}
           ODDS_BOOKMAKERS: ${{ vars.ODDS_BOOKMAKERS }}
           ODDS_SPORTS: ${{ vars.ODDS_SPORTS }}
           ODDS_WINDOW_HOURS: ${{ vars.ODDS_WINDOW_HOURS }}
