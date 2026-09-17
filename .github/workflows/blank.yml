@@ -31,6 +31,11 @@ jobs:
           ODDS_WINDOW_HOURS: ${{ vars.ODDS_WINDOW_HOURS }}
           SUPABASE_URL: ${{ vars.SUPABASE_URL || secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY || secrets.SUPABASE_ANON_KEY }}
+          STRIPE_MONTHLY_LINK: ${{ vars.STRIPE_MONTHLY_LINK }}
+          STRIPE_YEARLY_LINK: ${{ vars.STRIPE_YEARLY_LINK }}
+          STRIPE_PORTAL_LINK: ${{ vars.STRIPE_PORTAL_LINK }}
+          PREMIUM_MONTHLY_PRICE: ${{ vars.PREMIUM_MONTHLY_PRICE }}
+          PREMIUM_YEARLY_PRICE: ${{ vars.PREMIUM_YEARLY_PRICE }}
         run: |
           if [ -f propbook.zip ]; then unzip -oq propbook.zip; fi
           if [ -d propbook/scripts ]; then cd propbook; fi
