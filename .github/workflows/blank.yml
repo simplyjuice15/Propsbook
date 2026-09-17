@@ -29,6 +29,8 @@ jobs:
           ODDS_BOOKMAKERS: ${{ vars.ODDS_BOOKMAKERS }}
           ODDS_SPORTS: ${{ vars.ODDS_SPORTS }}
           ODDS_WINDOW_HOURS: ${{ vars.ODDS_WINDOW_HOURS }}
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
         run: |
           if [ -f propbook.zip ]; then unzip -oq propbook.zip; fi
           if [ -d propbook/scripts ]; then cd propbook; fi
