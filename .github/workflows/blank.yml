@@ -44,6 +44,8 @@ jobs:
           npm test
           node scripts/refresh.mjs
           cp -r public "$GITHUB_WORKSPACE/site"
+                    echo thepropbook.com > "$GITHUB_WORKSPACE/site/CNAME"
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
