@@ -2,7 +2,8 @@ name: Refresh slate
 
 on:
   schedule:
-    - cron: "0 15 * * *"
+    - cron: "0 15 * * *"   # 11am Eastern: full rebuild of every sport
+    - cron: "5 * * * *"    # hourly: only sports with games starting within about 4 hours
   workflow_dispatch:
 
 permissions:
@@ -20,6 +21,17 @@ jobs:
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            public/data
+            propbook/public/data
+            .cache
+            propbook/.cache
+          key: propbook-data-${{ github.run_id }}
+          restore-keys: propbook-data-
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -32,7 +44,10 @@ jobs:
           SUPABASE_URL: ${{ vars.SUPABASE_URL || secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY || secrets.SUPABASE_ANON_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-
+          GMAIL_USER: ${{ vars.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          SITE_URL: ${{ vars.SITE_URL }}
+          GITHUB_EVENT_SCHEDULE: ${{ github.event.schedule }}
           STRIPE_MONTHLY_LINK: ${{ vars.STRIPE_MONTHLY_LINK }}
           STRIPE_YEARLY_LINK: ${{ vars.STRIPE_YEARLY_LINK }}
           STRIPE_PORTAL_LINK: ${{ vars.STRIPE_PORTAL_LINK }}
@@ -42,13 +57,17 @@ jobs:
           if [ -f propbook.zip ]; then unzip -oq propbook.zip; fi
           if [ -d propbook/scripts ]; then cd propbook; fi
           npm test
-          node scripts/refresh.mjs
+          if [ "$GITHUB_EVENT_SCHEDULE" = "5 * * * *" ]; then
+            node scripts/refresh.mjs --due
+          else
+            node scripts/refresh.mjs
+          fi
           cp -r public "$GITHUB_WORKSPACE/site"
-                    echo thepropbook.com > "$GITHUB_WORKSPACE/site/CNAME"
-
+          echo thepropbook.com > "$GITHUB_WORKSPACE/site/CNAME"
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -59,4 +78,3 @@ jobs:
     environment: github-pages
     steps:
       - uses: actions/deploy-pages@v4
-
