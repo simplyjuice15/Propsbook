@@ -47,6 +47,8 @@ jobs:
           GMAIL_USER: ${{ vars.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           SITE_URL: ${{ vars.SITE_URL }}
+          OWNER_EMAIL: ${{ vars.OWNER_EMAIL }}
+          CF_ANALYTICS_TOKEN: ${{ vars.CF_ANALYTICS_TOKEN }}
           GITHUB_EVENT_SCHEDULE: ${{ github.event.schedule }}
           STRIPE_MONTHLY_LINK: ${{ vars.STRIPE_MONTHLY_LINK }}
           STRIPE_YEARLY_LINK: ${{ vars.STRIPE_YEARLY_LINK }}
